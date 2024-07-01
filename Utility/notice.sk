@@ -1,0 +1,13 @@
+on join:
+	set {_플레이어목록::*} to all players
+	broadcast "&6&l[BOT] &a&l%player% &7님이 입장 하셨습니다! 현재 접속자 수: &c&l%size of {_플레이어목록::*}%&f명"
+	broadcast "&6&l[BOT] &7돈 확인 명령어 : &f/m &7입니다."
+
+every 10 minutes:
+	if {공지사항} >= 1:
+		delete {공지사항}
+		stop
+	if {공지사항} is not set:
+		set {공지사항} to 1
+		broadcast "&6&l[BOT] &f쓰레기통 열기 명령어 : /제거"
+		broadcast "&6&l[BOT] &f쓰레기통에 넣은 아이템은 사라지니 &4&l[주의] &f해주세요!"

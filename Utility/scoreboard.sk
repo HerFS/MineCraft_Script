@@ -1,0 +1,40 @@
+variables:
+	{score::%player%} = 1
+	
+every 0.2 seconds:
+	loop all players:
+		if {score::%loop-player%} is 1:
+			wipe loop-player's sidebar
+			set name of sidebar of loop-player to "&b&l구스덕 &6&l서버"
+			set {_x} to round down x-coordinate of location of loop-player
+			set {_z} to round down z-coordinate of location of loop-player
+			set score "&7  좌표 : &ex :%{_x} + 1% z :%{_z}%" in sidebar of loop-player to 5
+			set score "&7  소지금 : &a%loop-player's money%원" in sidebar of loop-player to 4
+			set score "&7  인원 : &c&l%number of all players%&f명" in sidebar of loop-player to 3
+			set score "&7  돈 확인 명령어 : &f/m" in sidebar of loop-player to 2
+			set score "&7  명령어 : &f/on, &f/off" in sidebar of loop-player to 1
+
+every 30 minutes:
+	loop all players:
+		if {score::%loop-player%} is 0:
+			message "&6&l[BOT] &7현재 스코어보드가 비활성화 입니다. /on" to loop-player
+			stop
+
+command /on:
+	trigger:
+		if {score::%player%} is 0:
+			set {score::%player%} to 1
+			message "&6&l[BOT] &7스코어보드가 활성화 되었습니다 !"
+			stop
+		else if {score::%player%} is 1:
+			message "&6&l[BOT] &7스코어보드가 이미 활성화 되어있습니다 !"
+			stop
+			
+command /off:
+	trigger:
+		if {score::%player%} is 1:
+			wipe player's sidebar
+			delete {score::%player%}
+			set {score::%player%} to 0
+			message "&6&l[BOT] &7스코어보드가 비활성화 되었습니다 !"
+			stop

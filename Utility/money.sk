@@ -1,0 +1,217 @@
+options:
+
+    a: &a&l[&aMoney&a&l]&f
+
+on rightclick with paper:
+
+    name of tool contains "{@a} "
+
+    cancel event
+
+    set {_m} to uncolored name of tool
+
+    replace "[Money]", "원 (우클릭)" and " " with "" in {_m}
+
+    remove 1 of tool from tool
+
+    add {_m} parsed as integer to player's money
+
+    send "{@a} 수표를 소비해 &e%{_m}%&e원&f을 획득하였습니다. &7(소지금 : %player's money%&7원)" 
+	
+
+command /수표 [<integer>] [<integer>]:
+
+
+    trigger:
+
+        if arg 1 or arg 2 is not set:
+
+            send "{@a} &7/&f수표 [금액] [갯수] &6- &e돈을 소비하여 수표를 발행합니다."
+
+        else if player's money + 0 < arg-1 * arg-2 :
+
+            send "{@a} 돈이 부족해 수표를 발행 할 수 없습니다. &7(소지금 : %player's money%&7원)"
+
+        else:    
+
+            set {_i} to arg-2 of paper named "{@a} &e%arg-1%&e원 &7(우클릭)" with lore " &7우클릭시 수표가 소비되며 돈이 지급됩니다."
+
+            if player has space for {_i}:
+
+                remove arg 1 * arg 2 from player's money
+
+                give {_i} to player
+
+                send "{@a} &e%arg-1%&e원 &f수표 &e%arg-2%&f장을 발행하였습니다. &7(소지금 : %player's money%&7원)"
+
+            else:
+
+                send "{@a} 인벤토리에 자리가 부족해 수표를 발행할 수 없습니다."
+
+        
+
+command /m [<text>] [<player>] [<integer>]:
+
+    trigger:                
+        if arg 1 is "set" or "give" or "take" or "reset":
+
+            if player is not op:
+
+                play sound "entity.villager.no"
+
+                send "{@a} 권한이 부족해 명령어를 실행 할 수 없습니다."
+
+                stop
+
+            if arg 2 is not set:
+
+                play sound "entity.villager.no"
+
+                send "{@a} 이름을 입력하지 않았습니다."
+
+                stop            
+
+            else:
+
+                if arg 1 is "reset":
+
+                    play sound "block.note.bell" to arg-player
+
+                    play sound "block.note.bell"                    
+
+                    delete money of arg-player
+
+                    send "{@a} &e%{arg-player}%&f님의 돈을 초기화하였습니다."
+
+                    send "{@a} 관리자가 &e%{arg-player}%&f님의 돈을 초기화하였습니다." to arg-player
+
+                    stop        
+
+                if arg 3 is not set:
+
+                    play sound "entity.villager.no"
+
+                    send "{@a} 금액을 입력하지 않았습니다."
+
+                    stop                        
+
+                set {_p} to arg-player
+
+                set {_u} to uuid of {_p}    
+
+                play sound "block.note.bell" to {_p}
+
+                play sound "block.note.bell"
+
+                if arg 1 is "set":
+					
+                    set money of arg-player to arg-3
+
+                    send "{@a} 관리자가 &e%arg-2%&f님돈을 &e%arg-3%&e원&f으로 설정했습니다." to {_p}
+
+                    send "{@a} &e%arg-2%&f님의 돈을 &e%arg-3%&e원&f으로 설정했습니다."                
+
+                else if arg 1 is "give":
+
+                    add arg-3 to money of arg-player
+
+                    send "{@a} 관리자가 &e%arg-3%&e원&f을 지급했습니다. &7(소지금 : %money of arg-player%&7원)" to {_p}
+
+                    send "{@a} &e%arg-2%님에게 &e%arg-3%&e원&f을 지급했습니다. &7(소지금 : %money of arg-player%&7원)"
+
+                else if arg 1 is "take":    
+
+                    remove arg-3 from money of arg-player                
+
+                    send "{@a} 관리자가 &e%arg-3%&e원&f을 뺏었습니다. &7(소지금 : %money of arg-player%&7원)" to {_p}
+
+                    send "{@a} &e%arg-2%님의 돈을 &e%arg-3%&e원&f을 뺏었습니다. &7(소지금 : %money of arg-player%&7원)"
+
+        else:        
+
+            if arg 1 is "send":
+
+                if arg 2 or arg 3 is not set:
+
+                    send "{@a} 이름 또는 금액 을 입력하지 않았습니다."
+
+                else if arg 2 is player:
+
+                    send "{@a} 자기자신에게는 돈을 보낼 수 없습니다."
+
+                else if arg 3 <= 0:    
+
+                    send "{@a} 보낼 금액이 0원보다 커야합니다."
+
+                else if arg 3 > player's money + 0:
+
+                    send "{@a} 소지금이 부족하여 돈을 보낼 수 없습니다."
+
+                else:
+
+                    remove arg-3 from player's money
+
+                    add arg-3 to money of arg-player
+
+                    play sound "block.note.bell" to player
+
+                    play sound "block.note.bell" to arg-player
+
+                    send "{@a} &e%arg-player%&f님에게 &e%arg-3%&e원&f을 보냈습니다. &7(소지금 : %player's money%&7원)"
+
+                    send "{@a} &e%player%&f님께서 &e%arg-3%&e원&f을 보냈습니다. &7(소지금 : %money of arg-player%&7원)" to arg-player                               
+
+                    stop
+
+                play sound "entity.villager.no"    
+
+            else if arg 1 is "check":
+
+                if arg 2 is not set:
+
+                    play sound "entity.villager.no"
+
+                    send "{@a} 이름 을 입력하지 않았습니다."
+
+                    stop                
+					
+                play sound "block.note.bell"
+
+                send ""
+
+                send "{@a} &e%arg-player%님의 소지금 : &e%money of arg-player + 0% 원" # 돈 확인
+
+                send ""    
+
+            else:
+
+                play sound "block.note.hat"
+
+                send "&2&l&m=============&2&l [ &a돈 도움말 &2&l] &2&l&m============="
+
+                send ""
+
+                send "       &a▣ &e%player%님의 소지금 : &e%player's money + 0% 원"
+
+                send " &8/&fm send &f[이름] [금액] &6- &e다른 유저에게 돈을 보냅니다."
+
+                send " &8/&fm check &f[이름] &6- &e다른 유저의 소지금을 확인합니다."
+
+                send " &8/&f수표 [금액] [갯수] &6- &e돈을 소비하여 수표를 발행합니다."
+				
+
+                player is op
+
+                send ""
+
+                send " &8/&fm set &f[이름] [금액] &6- &e유저의 돈을 설정합니다. &c(Op)"
+
+                send " &8/&fm give &f[이름] [금액] &6- &e유저에게 돈을 지급합니다. &c(Op)"
+
+                send " &8/&fm take &f[이름] [금액] &6- &e유저의 돈을 차감합니다. &c(Op)"
+
+                send " &8/&fm reset &f[이름|전체] &6- &e돈 변수를 초기화합니다. &c(Op)"    
+
+                stop        
+				
+				

@@ -1,0 +1,28 @@
+# 레벨업 쿠폰
+
+options:
+	c: &a&l[LEVEL]&f
+
+command /레벨업쿠폰 [<player>] [<integer>]:
+	trigger:
+		if player is not op:
+			send "권한이 부족해 명령어를 실행 할 수 없습니다."
+		else:
+			give arg-2 of paper named "{@c} 레벨업쿠폰" with lore "&a오른쪽 클릭을 하면 레벨업!" to arg-player
+			send "{@c} %arg-2%개의 레벨업쿠폰을 지급했습니다!!" to player
+			send "{@c} 관리자분께서 %arg-2%개의 레벨업쿠폰을 지급했습니다!!" to arg-player
+
+
+on rightclick with paper:
+
+	name of tool contains "{@c}"
+	
+	cancel event
+	
+	remove 1 of tool from tool
+	
+	add 1 to player's level
+	
+	play sound "ENTITY_PLAYER_LEVELUP" with volume 0.5 and pitch 1 at player
+	
+	send "{@c} 레벨업 쿠폰을 사용해서 레벨업하셨습니다."

@@ -1,0 +1,21 @@
+options:
+	c: &c&l[무사귀환]&f
+
+command /마을귀환서 [<player>] [<integer>]:
+	trigger:
+		if player is not op:
+			send "권한이 부족해 명령어를 실행 할 수 없습니다."
+		else:
+			give arg-2 of paper named "{@c}마을귀환서" with lore "&c마을로" to arg-player
+			send "{@c}&f %arg-player%에게 %arg-2%개의 마을귀환서를 지급했습니다!!" to player
+			send "{@c} &f%arg-2%개의 귀환서를 지급했습니다!!" to arg-player
+on rightclick:
+		name of tool contains "{@c}"
+		
+		teleport player to location(-278.5, 64, 190.5,world "vliage")
+		
+		play sound "ENTITY_EXPERIENCE_BOTTLE_THROW" with volume 2 and pitch 0.5 at player
+		
+		remove 1 of player's tool from player's tool
+	
+		send title "{@c}"

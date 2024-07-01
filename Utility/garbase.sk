@@ -1,0 +1,12 @@
+# 쓰레기통
+command /제거:
+	trigger:
+		open chest inventory with 6 rows named "&0&l[쓰레기통]&4&l아이템 넣고 닫으면 사라져요!" to player
+		set slot 49 of current inventory of player to barrier named "&f닫기버튼"
+on inventory click:
+	if event-inventory's display name contains "&0&l[쓰레기통]":
+		if clicked raw slot is 49:
+			cancel event
+			close player's inventory
+		
+on inventory close:

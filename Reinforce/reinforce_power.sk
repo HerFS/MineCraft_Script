@@ -1,0 +1,252 @@
+#장비 강화 스크립트
+
+options:
+	h : &e&l[공격강화]&f
+	h2: &e&l[공격]&f
+	s : of current inventory of player to
+	l : leather
+	i : iron
+	g : golden
+	d : diamond
+	n : netherite
+			
+command /공격확률책 [<integer>]:
+	trigger:
+		if player is not op:
+			send "권한이 부족해 명령어를 실행 할 수 없습니다."
+		else:
+			give 1 of enchanted book named "{@h2}확률책" with lore "&f%arg-1%" to player
+			
+			
+
+on right click on entity:
+	if entity's name is "&e&l[공격력]&f강화하기":
+		
+		if name of player's tool contains "[강화]":
+			open chest inventory with 6 rows named "{@h}&0&l 강화 준비 단계" to player # inventory open
+			set {_a} to 0
+			set {_b} to 32
+			loop 22 times:
+				set slot {_a} {@s} white stained glass pane # 꾸미기
+				set slot {_b} {@s} white stained glass pane
+				add 1 to {_a}
+				add 1 to {_b}
+			set {_a} to 23
+			loop 8 times:
+				set slot {_a} {@s} white stained glass pane 
+				add 1 to {_a}
+			set slot 22 {@s} {r_head::1} named "{@h} &l장비칸" with lore "&f아래에 강화할 장비를 올려놓고" and "&f하단 버튼을 클릭해주세요." # 아이템 설명
+			set slot 49 {@s} {r_head::2} named "{@h} &l강화 단계로" # 아이템 설명
+			delete {공격강화::%player%::진행중}
+		else:
+			message "{@h} &c강화서가 필요합니다 강화서를 들고 클릭해주세요." to player
+			
+on inventory click:
+	if event-inventory's display name contains "{@h}&0&l 강화 준비 단계": # if inventory item cancel
+		if clicked raw slot is 31 or 49:
+			if clicked raw slot is 49: # if clicked 49
+				if slot 31 of current inventory of player is not air: # if slot 31 not air
+					set {공격강화::%player%::진행중} to true
+					cancel event
+					if slot 31 of current inventory of player is {@i} sword or {@g} sword or {@d} sword or {@n} sword: # 검
+						set {공격강화::%player%::아이템} to slot 31 of current inventory of player
+						set {공격강화::%player%::아이템::로어::*} to lore of {공격강화::%player%::아이템}
+						set {_공격강화아이템} to slot 31 of current inventory of player
+						if {공격강화::%player%::아이템::로어::*} is not set: # lore have not
+							set {공격강화::%player%::아이템} to slot 31 of current inventory of player with lore "&f- 체력 0" and "&f- 공격력 0" and "&f- 방어력 0"
+							set {공격강화::%player%::아이템::로어::*} to lore of {공격강화::%player%::아이템}
+						loop {공격강화::%player%::아이템::로어::*}:
+							if {공격강화::%player%::아이템::로어::%loop-index%} contains "- 공격력 10":
+								close player's inventory
+								give 1 of {_공격강화아이템} to player	
+								send title "&f이미 강화 &f&6MAX &f입니다."
+							if event-inventory's display name contains "{@h}&0&l 강화 준비 단계":
+								open chest inventory with 6 rows named "{@h} &l강화 단계" to player
+								set slot 10 {@s} {r_head::1} named "{@h} &l장비칸" with lore "&f강화준비가 완료되면" and "&f하단 버튼을 클릭해주세요."
+								set slot 16 {@s} {r_head::1} named "{@h} &l장비칸" with lore "&f장비가 완료된 아이템이" and "&f여기로 나옵니다."
+								set slot 4 {@s} {r_head::3} named "{@h} &l재료칸" with lore "{@h2}&l확률책" and "&f숫자에 따라 강화 확률이 달라집니다!"
+								set slot 46 {@s} {r_head::4} named "{@h} &l처음으로"
+								set slot 49 {@s} {r_head::5} named "{@h} &l장비 강화"
+								set slot 19 {@s} {공격강화::%player%::아이템}
+								set {_slot::*} to 0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 17, 18, 20, 21, 23, 24, 47, 48, 50, 51 ,52 and 53 # white stained glass pans setting				
+								loop {_slot::*}:
+									set slot loop-value-2 {@s} white stained glass pane
+								set {_a} to 26
+								loop 20 times:
+									set slot {_a} {@s} white stained glass pane
+									add 1 to {_a}
+					else if slot 31 of current inventory of player is {@i} axe or {@g} axe or {@d} axe or {@n} axe: # 도끼
+						set {공격강화::%player%::아이템} to slot 31 of current inventory of player
+						set {공격강화::%player%::아이템::로어::*} to lore of {공격강화::%player%::아이템}
+						set {_공격강화아이템} to slot 31 of current inventory of player
+						if {공격강화::%player%::아이템::로어::*} is not set: # lore have not
+							set {공격강화::%player%::아이템} to slot 31 of current inventory of player with lore "&f- 체력 0" and "&f- 공격력 0" and "&f- 방어력 0"
+							set {공격강화::%player%::아이템::로어::*} to lore of {공격강화::%player%::아이템}
+						loop {공격강화::%player%::아이템::로어::*}:
+							if {공격강화::%player%::아이템::로어::%loop-index%} contains "- 공격력 5":
+								close player's inventory
+								give 1 of {_공격강화아이템} to player	
+								send title "&f이미 강화 &f&6MAX &f입니다."
+							if event-inventory's display name contains "{@h}&0&l 강화 준비 단계":
+								open chest inventory with 6 rows named "{@h} &l강화 단계" to player
+								set slot 10 {@s} {r_head::1} named "{@h} &l장비칸" with lore "&f강화준비가 완료되면" and "&f하단 버튼을 클릭해주세요."
+								set slot 16 {@s} {r_head::1} named "{@h} &l장비칸" with lore "&f장비가 완료된 아이템이" and "&f여기로 나옵니다."
+								set slot 4 {@s} {r_head::3} named "{@h} &l재료칸" with lore "{@h2}&l확률책" and "&f숫자에 따라 강화 확률이 달라집니다!"
+								set slot 46 {@s} {r_head::4} named "{@h} &l처음으로"
+								set slot 49 {@s} {r_head::6} named "{@h} &l장비 강화"
+								set slot 19 {@s} {공격강화::%player%::아이템}
+								set {_slot::*} to 0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 17, 18, 20, 21, 23, 24, 47, 48, 50, 51 ,52 and 53 # white stained glass pans setting				
+								loop {_slot::*}:
+									set slot loop-value-2 {@s} white stained glass pane
+								set {_a} to 26
+								loop 20 times:
+									set slot {_a} {@s} white stained glass pane
+									add 1 to {_a}
+					else:
+						message "{@h}&l강화에 맞는 장비를"
+						message "            &l올려놔 주세요!"
+					delete {공격강화::%player%::진행중}
+				else:
+					cancel event
+					message "{@h}&l강화하실 장비를"
+					message "            &l올려놔 주세요!"
+		else:
+			if clicked raw slot is not between 54 and 89:
+				cancel event
+		
+on inventory click:
+	if event-inventory's display name contains "{@h} &l강화 단계": # if inventory item cancel
+		if clicked raw slot is 49 or 46 or 25 or 22: # cliked true
+			if clicked raw slot is 49:
+				cancel event
+				if slot 19 of current inventory of player is not air:
+					set {_공격재료} to slot 22 of current inventory of player
+					if name of {_공격재료} contains "{@h2}":
+						set {공격강화::%player%::진행중} to true
+						set slot 22 {@s} air
+						play sound "BLOCK_ANVIL_USE" with volume 0.5 and pitch 1 at player
+						loop {공격강화::%player%::아이템::로어::*}:
+							if {공격강화::%player%::아이템::로어::%loop-index%} contains "공격력":
+								set {_공격스탯} to uncolored {공격강화::%player%::아이템::로어::%loop-index%}
+								replace all " " and "-" and "공격력" with "" in {_공격스탯}
+								set {_int} to name of {_공격재료}
+								set {_공격스탯} to {_공격스탯} parsed as number
+								set {_공격확률::*} to uncolored lore of {_공격재료}
+								set {_공격확률::1} to {_공격확률::1} parsed as number
+								chance of {_공격확률::1}%:
+									add 1 to {_공격스탯}
+									loop {공격강화::%player%::아이템::로어::*}:
+										if {공격강화::%player%::아이템::로어::%loop-index-2%} contains "공격력":
+											set {공격강화::%player%::아이템::로어::%loop-index-2%} to "&f- 공격력 %{_공격스탯}%"
+									set slot 19 {@s} air
+									set {_공격강화} to uncolored name of {공격강화::%player%::아이템}
+									replace all {_공격강화} with "" in {_공격강화색}
+									set {_공격강화::*} to uncolored {_공격강화}
+									if {_공격강화::2} is set:
+										replace all " " with "" in {_공격강화::2}
+										set {_공격강화::2} to {_공격강화::2} parsed as number
+										add 1 to {_공격강화::2}
+										set {_공격최종이름} to "%{_공격강화::1}%"
+									else:
+										set {_공격최종이름} to "%{_공격강화::1}%"
+										
+									set slot 25 {@s} {공격강화::%player%::아이템} named "%{_공격최종이름}%" with lore {공격강화::%player%::아이템::로어::*}
+									delete {공격강화::%player%::*}
+									set {_공격강화아이템} to slot 25 of current inventory of player
+									close player's inventory
+									wait 20 tick
+									give 1 of {_공격강화아이템} to player		
+									send title "&f강화에 &a&l성공&f하셨습니다!"
+									launch flickering trailing star colored red and pink fading yellow at player's location timed 1
+									play sound "ENTITY_PLAYER_LEVELUP" with volume 0.5 and pitch 1 at player
+									stop
+									delete {공격강화::%player%::진행중}
+								else:
+									set slot 19 {@s} air
+									set slot 25 {@s} {공격강화::%player%::아이템}
+									delete {공격강화::%player%::*}
+									set {_공격강화아이템} to slot 25 of current inventory of player
+									close player's inventory
+									wait 20 tick
+									give 1 of {_공격강화아이템} to player
+									send title "&f강화에 &4&l실패&f하셨습니다..."
+									play sound "ENTITY_ZOMBIE_ATTACK_IRON_DOOR" with volume 1 and pitch 1 at player
+									stop
+									delete {공격강화::%player%::진행중}
+						
+					else:
+						cancel event
+						message "{@h}&l강화에 필요한 재료가"
+						message "            &l맞지 않습니다!"
+						
+			if clicked raw slot is 46:
+				cancel event
+				if slot 22 of current inventory of player is air: #
+					set {공격강화::%player%::진행중} to true
+					if slot 25 of current inventory of player is air:
+						open chest inventory with 6 rows named "{@h}&0&l 강화 준비 단계" to player
+						set {_a} to 0
+						set {_b} to 32
+						loop 22 times:
+							set slot {_a} {@s} white stained glass pane # 꾸미기
+							set slot {_b} {@s} white stained glass pane
+							add 1 to {_a}
+							add 1 to {_b}
+						set {_a} to 23
+						loop 8 times:
+							set slot {_a} {@s} white stained glass pane 
+							add 1 to {_a}
+						set slot 22 {@s} {r_head::1} named "{@h}&l장비칸" with lore "&f아래에 강화할 장비를 올려놓고" and "&f하단 버튼을 클릭해주세요." # 아이템 설명
+						set slot 49 {@s} {r_head::2} named "{@h}&l강화 단계로" # 아이템 설명
+						set slot 31 {@s} {공격강화::%player%::아이템}
+						delete {공격강화::%player%::*}
+						delete {공격강화::%player%::진행중}
+						message "{@h}&l처음으로"
+					else:
+						message "{@h}&l장비를 회수해주세요!"
+				else:
+					message "{@h}&l재료칸에 아이템을"
+					message "            &l비워주세요!"
+		else:
+			if clicked raw slot is not between 54 and 89:
+				cancel event
+
+on inventory click:
+	if event-inventory's display name contains "{@h}&l 강화 재료": # if inventory item cancel
+		if clicked raw slot is 31:
+			cancel event
+			set {공격강화::%player%::진행중} to true
+			open chest inventory with 6 rows named "{@h} &l강화 단계" to player
+			set slot 10 {@s} {r_head::1} named "{@h} &l장비칸" with lore "&f강화준비가 완료되면" and "&f하단 버튼을 클릭해주세요."
+			set slot 16 {@s} {r_head::1} named "{@h} &l장비칸" with lore "&f장비가 완료된 아이템이" and "&f여기로 나옵니다."
+			set slot 4 {@s} {r_head::3} named "{@h} &l재료칸" with lore "{@h2}&l확률책" and "&f숫자에 따라 강화 확률이 달라집니다!"
+			set slot 46 {@s} {r_head::4} named "{@h} &l처음으로"
+			set slot 49 {@s} {r_head::6} named "{@h} &l장비 강화"
+			set slot 19 {@s} {공격강화::%player%::아이템}
+			set {_slot::*} to 0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 17, 18, 20, 21, 23, 24, 47, 48, 50, 51, 52 and 53					
+			loop {_slot::*}:
+				set slot loop-value {@s} white stained glass pane
+			set {_a} to 26
+			loop 20 times:
+				set slot {_a} {@s} white stained glass pane
+				add 1 to {_a}
+			delete {공격강화::%player%::진행중}
+		else:
+			cancel event
+			
+on inventory close:
+	if event-inventory's display name contains "{@h}&0&l 강화 준비 단계":
+		if {공격강화::%player%::진행중} is not set:
+			if slot 31 of current inventory of player is not air:
+				set {_공격강화아이템} to slot 31 of current inventory of player
+				give 1 of {_공격강화아이템} to player
+					
+	if event-inventory's display name contains "{@h} &l강화 단계":
+		if {공격강화::%player%::진행중} is not set:
+			set {_공격강화아이템} to slot 19 of current inventory of player
+			set {_공격재료} to slot 22 of current inventory of player
+			if slot 19 of current inventory of player is not air:
+				give {_공격강화아이템} to player
+			if {_공격재료} is not air:
+				give {_공격재료} to player
+				
